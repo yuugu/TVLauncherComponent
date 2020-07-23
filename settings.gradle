@@ -1,0 +1,4 @@
+include ':waterfall-module'
+include ':tangram'
+include ':app'
+rootProject.name = "TVLauncherComponent"
