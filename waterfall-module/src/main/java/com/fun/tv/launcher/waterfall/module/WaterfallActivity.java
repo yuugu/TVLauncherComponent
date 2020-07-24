@@ -12,14 +12,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.fun.tv.launcher.tangram.TangramBuilder;
 import com.fun.tv.launcher.tangram.TangramEngine;
-import com.fun.tv.launcher.tangram.structure.view.SimpleEmptyView;
+import com.fun.tv.launcher.tangram.structure.viewcreator.ViewHolderCreator;
 import com.fun.tv.launcher.tangram.util.IInnerImageSetter;
-import com.fun.tv.launcher.waterfall.module.data.FloatView;
+import com.fun.tv.launcher.waterfall.module.data.RatioTextView;
 import com.fun.tv.launcher.waterfall.module.data.SimpleImgView;
 import com.fun.tv.launcher.waterfall.module.data.SingleImageView;
+import com.fun.tv.launcher.waterfall.module.data.TestView;
+import com.fun.tv.launcher.waterfall.module.data.TestViewHolder;
+import com.fun.tv.launcher.waterfall.module.data.TestViewHolderCell;
 import com.fun.tv.launcher.waterfall.module.dataparser.CustomerSampleDataParser;
 import com.libra.Utils;
 import com.squareup.picasso.Picasso;
@@ -76,7 +80,14 @@ public class WaterfallActivity extends Activity {
         builder.registerCell("history", SimpleImgView.class);
         builder.registerCell("channel", SimpleImgView.class);
         builder.registerCell("classify", SimpleImgView.class);
-
+        builder.registerCell(1, TestView.class);
+        builder.registerCell(10, SimpleImgView.class);
+        builder.registerCell(2, SimpleImgView.class);
+        builder.registerCell(4, RatioTextView.class);
+        builder.registerCell(110,
+                TestViewHolderCell.class,
+                new ViewHolderCreator<>(R.layout.item_holder, TestViewHolder.class, TextView.class));
+        builder.registerCell(199, SingleImageView.class);
         //Step 4: new engine
         engine = builder.build();
 
@@ -114,7 +125,7 @@ public class WaterfallActivity extends Activity {
 
         engine.bindView(recyclerView);
 
-        engine.getLayoutManager().setFixOffset(0, 0, 0, 0);
+        engine.getLayoutManager().setFixOffset(10, 10, 10, 10);
 
         //add: custom dataParser
         builder.setDataParser(new CustomerSampleDataParser());
