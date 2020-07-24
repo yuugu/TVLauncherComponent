@@ -59,6 +59,7 @@ import com.fun.tv.launcher.tangram.structure.card.PinBottomCard;
 import com.fun.tv.launcher.tangram.structure.card.PinTopCard;
 import com.fun.tv.launcher.tangram.structure.card.ScrollFixCard;
 import com.fun.tv.launcher.tangram.structure.card.SingleColumnCard;
+import com.fun.tv.launcher.tangram.structure.card.SixColumnCard;
 import com.fun.tv.launcher.tangram.structure.card.StaggeredCard;
 import com.fun.tv.launcher.tangram.structure.card.StickyCard;
 import com.fun.tv.launcher.tangram.structure.card.StickyEndCard;
@@ -238,6 +239,8 @@ public class TangramBuilder {
 
     public static final String TYPE_CONTAINER_5C_FLOW = "container-fiveColumn";
 
+    public static final String TYPE_CONTAINER_6C_FLOW = "container-sixColumn";
+
     public static final String TYPE_CONTAINER_ON_PLUSN = "container-onePlusN";
 
     public static final String TYPE_CONTAINER_FLOAT = "container-float";
@@ -318,6 +321,7 @@ public class TangramBuilder {
         registry.registerCard(TYPE_PIN_BOTTOM_COMPACT, PinBottomCard.class);
         registry.registerCard(TYPE_FIVE_COLUMN_COMPACT, FiveColumnCard.class);
         registry.registerCard(TYPE_CONTAINER_5C_FLOW, FiveColumnCard.class);
+        registry.registerCard(TYPE_CONTAINER_6C_FLOW, SixColumnCard.class);
         registry.registerCard(TYPE_STICKY_COMPACT, StickyCard.class);
         registry.registerCard(TYPE_CONTAINER_STICKY, StickyCard.class);
         registry.registerCard(TYPE_STICKY_START_COMPACT, StickyCard.class);
