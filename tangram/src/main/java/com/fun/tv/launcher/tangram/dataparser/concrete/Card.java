@@ -76,7 +76,7 @@ public abstract class Card extends ComponentLifecycle {
 
     private static final String TAG = "Card";
 
-    public static final String KEY_TYPE = "style_template";
+    public static final String KEY_TYPE = "type";
 
     public static final String KEY_STYLE = "style";
 

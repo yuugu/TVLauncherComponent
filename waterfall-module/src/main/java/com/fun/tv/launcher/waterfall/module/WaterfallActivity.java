@@ -5,30 +5,22 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
-import com.alibaba.android.vlayout.Range;
 import com.fun.tv.launcher.tangram.TangramBuilder;
 import com.fun.tv.launcher.tangram.TangramEngine;
-import com.fun.tv.launcher.tangram.core.adapter.GroupBasicAdapter;
-import com.fun.tv.launcher.tangram.dataparser.concrete.Card;
-import com.fun.tv.launcher.tangram.structure.BaseCell;
-import com.fun.tv.launcher.tangram.support.InternalErrorSupport;
-import com.fun.tv.launcher.tangram.support.async.AsyncLoader;
-import com.fun.tv.launcher.tangram.support.async.AsyncPageLoader;
-import com.fun.tv.launcher.tangram.support.async.CardLoadSupport;
+import com.fun.tv.launcher.tangram.structure.view.SimpleEmptyView;
 import com.fun.tv.launcher.tangram.util.IInnerImageSetter;
+import com.fun.tv.launcher.waterfall.module.data.FloatView;
+import com.fun.tv.launcher.waterfall.module.data.SimpleImgView;
 import com.fun.tv.launcher.waterfall.module.data.SingleImageView;
 import com.fun.tv.launcher.waterfall.module.dataparser.CustomerSampleDataParser;
-import com.fun.tv.launcher.waterfall.module.support.SampleErrorSupport;
 import com.libra.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -38,8 +30,6 @@ import com.tmall.wireless.vaf.virtualview.Helper.ImageLoader;
 import com.tmall.wireless.vaf.virtualview.view.image.ImageBase;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -64,7 +54,6 @@ public class WaterfallActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSystemBar();// 全屏设置
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.main_view);
 
@@ -84,7 +73,9 @@ public class WaterfallActivity extends Activity {
         builder = TangramBuilder.newInnerBuilder(this);
 
         //Step 3: register business cells and cards
-        builder.registerCell("fixed", SingleImageView.class);
+        builder.registerCell("history", SimpleImgView.class);
+        builder.registerCell("channel", SimpleImgView.class);
+        builder.registerCell("classify", SimpleImgView.class);
 
         //Step 4: new engine
         engine = builder.build();
@@ -120,84 +111,6 @@ public class WaterfallActivity extends Activity {
             }
         });
         Utils.setUedScreenWidth(720);
-
-        //Step 5: add card load support if you have card that loading cells async
-        engine.addCardLoadSupport(new CardLoadSupport(
-                new AsyncLoader() {
-                    @Override
-                    public void loadData(Card card, @NonNull final AsyncLoader.LoadedCallback callback) {
-                        Log.w("Load Card", card.load);
-
-                        mMainHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                // do loading
-                                JSONArray cells = new JSONArray();
-
-                                for (int i = 0; i < 10; i++) {
-                                    try {
-                                        JSONObject obj = new JSONObject();
-                                        obj.put("type", "fixed");
-                                        obj.put("msg", "async loaded");
-                                        JSONObject style = new JSONObject();
-                                        style.put("bgColor", "#FF1111");
-                                        obj.put("style", style.toString());
-                                        cells.put(obj);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                // callback.fail(false);
-                                callback.finish(engine.parseComponent(cells));
-                            }
-                        }, 200);
-                    }
-                },
-
-                new AsyncPageLoader() {
-                    @Override
-                    public void loadData(final int page, @NonNull final Card card, @NonNull final AsyncPageLoader.LoadedCallback callback) {
-                        mMainHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.w("Load page", card.load + " page " + page);
-                                JSONArray cells = new JSONArray();
-                                for (int i = 0; i < 9; i++) {
-                                    try {
-                                        JSONObject obj = new JSONObject();
-                                        obj.put("type", "history");
-                                        obj.put("msg", "async page loaded, params: " + card.getParams().toString());
-                                        cells.put(obj);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                List<BaseCell> cs = engine.parseComponent(cells);
-
-                                if (card.page == 1) {
-                                    GroupBasicAdapter<Card, ?> adapter = engine.getGroupBasicAdapter();
-
-                                    card.setCells(cs);
-                                    adapter.refreshWithoutNotify();
-                                    Range<Integer> range = adapter.getCardRange(card);
-
-                                    adapter.notifyItemRemoved(range.getLower());
-                                    adapter.notifyItemRangeInserted(range.getLower(), cs.size());
-
-                                } else
-                                    card.addCells(cs);
-
-                                //mock load 6 pages
-                                callback.finish(card.page != 6);
-                                card.notifyDataChange();
-                            }
-                        }, 400);
-                    }
-                }));
-
-        engine.enableAutoLoadMore(true);
-        engine.register(InternalErrorSupport.class, new SampleErrorSupport());
 
         engine.bindView(recyclerView);
 
@@ -297,21 +210,6 @@ public class WaterfallActivity extends Activity {
         @Override
         public void onPrepareLoad(Drawable placeHolderDrawable) {
             Log.d("WaterfallActivity", "onPrepareLoad ");
-        }
-    }
-
-    private void hideSystemBar(){
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            View decorView = getWindow().getDecorView();
-            int uiOptions =
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            decorView.setSystemUiVisibility(uiOptions);
         }
     }
 }
