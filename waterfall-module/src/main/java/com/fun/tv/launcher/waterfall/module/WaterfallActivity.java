@@ -93,7 +93,7 @@ public class WaterfallActivity extends Activity {
         //Step 4: new engine
         engine = builder.build();
 
-        engine.addSimpleClickSupport(new SampleClickSupport());
+//        engine.addSimpleClickSupport(new SampleClickSupport());
 
         engine.getService(VafContext.class).setImageLoaderAdapter(new ImageLoader.IImageLoaderAdapter() {
 
