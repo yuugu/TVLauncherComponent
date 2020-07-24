@@ -199,13 +199,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        findViewById(R.id.first).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                engine.refresh(true);
-            }
-        });
     }
 
     public static byte[] getAssertsFile(Context context, String fileName) {

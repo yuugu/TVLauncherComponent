@@ -1,30 +1,5 @@
-/*
- * MIT License
- *
- * Copyright (c) 2018 Alibaba Group
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package com.fun.tv.launcher.waterfall.module;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -37,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.alibaba.android.vlayout.Range;
@@ -50,17 +28,17 @@ import com.fun.tv.launcher.tangram.support.async.AsyncLoader;
 import com.fun.tv.launcher.tangram.support.async.AsyncPageLoader;
 import com.fun.tv.launcher.tangram.support.async.CardLoadSupport;
 import com.fun.tv.launcher.tangram.util.IInnerImageSetter;
-import com.fun.tv.launcher.waterfall.module.data.TestView;
+import com.fun.tv.launcher.waterfall.module.data.RatioTextView;
+import com.fun.tv.launcher.waterfall.module.data.SingleImageView;
+import com.fun.tv.launcher.waterfall.module.dataparser.CustomerSampleDataParser;
 import com.fun.tv.launcher.waterfall.module.support.SampleClickSupport;
 import com.fun.tv.launcher.waterfall.module.support.SampleErrorSupport;
 import com.libra.Utils;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
 import com.tmall.wireless.vaf.framework.VafContext;
-import com.tmall.wireless.vaf.virtualview.Helper.ImageLoader.IImageLoaderAdapter;
-import com.tmall.wireless.vaf.virtualview.Helper.ImageLoader.Listener;
+import com.tmall.wireless.vaf.virtualview.Helper.ImageLoader;
 import com.tmall.wireless.vaf.virtualview.view.image.ImageBase;
 
 import org.json.JSONArray;
@@ -74,58 +52,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by villadora on 15/8/18.
+ * @author: zheng
+ * @date: 2020/7/24
+ * 仅演示视频channel下的Tangram映射
  */
-public class TangramActivity extends Activity {
+public class WaterfallActivity extends Activity {
 
-    private static final String TAG = TangramActivity.class.getSimpleName();
+    private static final String TAG = WaterfallActivity.class.getSimpleName();
+    private RecyclerView recyclerView;
 
     private Handler mMainHandler;
-    TangramEngine engine;
-    TangramBuilder.InnerBuilder builder;
-    RecyclerView recyclerView;
+    private TangramEngine engine;
+    private TangramBuilder.InnerBuilder builder;
 
-    private static class ImageTarget implements Target {
-
-        ImageBase mImageBase;
-
-        Listener mListener;
-
-        public ImageTarget(ImageBase imageBase) {
-            mImageBase = imageBase;
-        }
-
-        public ImageTarget(Listener listener) {
-            mListener = listener;
-        }
-
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, LoadedFrom from) {
-            mImageBase.setBitmap(bitmap, true);
-            if (mListener != null) {
-                mListener.onImageLoadSuccess(bitmap);
-            }
-            Log.d("TangramActivity", "onBitmapLoaded " + from);
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-            if (mListener != null) {
-                mListener.onImageLoadFailed();
-            }
-            Log.d("TangramActivity", "onBitmapFailed ");
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-            Log.d("TangramActivity", "onPrepareLoad ");
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideSystemBar();// 全屏设置
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.main_view);
 
@@ -134,7 +77,7 @@ public class TangramActivity extends Activity {
             @Override
             public <IMAGE extends ImageView> void doLoadImageUrl(@NonNull IMAGE view,
                                                                  @Nullable String url) {
-                Picasso.with(TangramActivity.this.getApplicationContext()).load(url).into(view);
+                Picasso.with(WaterfallActivity.this.getApplicationContext()).load(url).into(view);
             }
         }, ImageView.class);
 
@@ -145,40 +88,37 @@ public class TangramActivity extends Activity {
         builder = TangramBuilder.newInnerBuilder(this);
 
         //Step 3: register business cells and cards
-        builder.registerCell(1, TestView.class);
-//        builder.registerCell(10, SimpleImgView.class);
-//        builder.registerCell(2, SimpleImgView.class);
-//        builder.registerCell(4, RatioTextView.class);
-//        builder.registerCell(110,
-//                TestViewHolderCell.class,
-//                new ViewHolderCreator<>(R.layout.item_holder, TestViewHolder.class, TextView.class));
-//        builder.registerCell(199, SingleImageView.class);
+        builder.registerCell("fixed", SingleImageView.class);
+
         //Step 4: new engine
         engine = builder.build();
-        engine.getService(VafContext.class).setImageLoaderAdapter(new IImageLoaderAdapter() {
+
+        engine.addSimpleClickSupport(new SampleClickSupport());
+
+        engine.getService(VafContext.class).setImageLoaderAdapter(new ImageLoader.IImageLoaderAdapter() {
 
             private List<ImageTarget> cache = new ArrayList<ImageTarget>();
 
             @Override
             public void bindImage(String uri, final ImageBase imageBase, int reqWidth, int reqHeight) {
-                RequestCreator requestCreator = Picasso.with(TangramActivity.this).load(uri);
-                Log.d("TangramActivity", "bindImage request width height " + reqHeight + " " + reqWidth);
+                RequestCreator requestCreator = Picasso.with(WaterfallActivity.this).load(uri);
+                Log.d("WaterfallActivity", "bindImage request width height " + reqHeight + " " + reqWidth);
                 if (reqHeight > 0 || reqWidth > 0) {
                     requestCreator.resize(reqWidth, reqHeight);
                 }
-                ImageTarget imageTarget = new ImageTarget(imageBase);
+                WaterfallActivity.ImageTarget imageTarget = new WaterfallActivity.ImageTarget(imageBase);
                 cache.add(imageTarget);
                 requestCreator.into(imageTarget);
             }
 
             @Override
-            public void getBitmap(String uri, int reqWidth, int reqHeight, final Listener lis) {
-                RequestCreator requestCreator = Picasso.with(TangramActivity.this).load(uri);
-                Log.d("TangramActivity", "getBitmap request width height " + reqHeight + " " + reqWidth);
+            public void getBitmap(String uri, int reqWidth, int reqHeight, final ImageLoader.Listener lis) {
+                RequestCreator requestCreator = Picasso.with(WaterfallActivity.this).load(uri);
+                Log.d("WaterfallActivity", "getBitmap request width height " + reqHeight + " " + reqWidth);
                 if (reqHeight > 0 || reqWidth > 0) {
                     requestCreator.resize(reqWidth, reqHeight);
                 }
-                ImageTarget imageTarget = new ImageTarget(lis);
+                WaterfallActivity.ImageTarget imageTarget = new WaterfallActivity.ImageTarget(lis);
                 cache.add(imageTarget);
                 requestCreator.into(imageTarget);
             }
@@ -189,7 +129,7 @@ public class TangramActivity extends Activity {
         engine.addCardLoadSupport(new CardLoadSupport(
                 new AsyncLoader() {
                     @Override
-                    public void loadData(Card card, @NonNull final LoadedCallback callback) {
+                    public void loadData(Card card, @NonNull final AsyncLoader.LoadedCallback callback) {
                         Log.w("Load Card", card.load);
 
                         mMainHandler.postDelayed(new Runnable() {
@@ -201,7 +141,7 @@ public class TangramActivity extends Activity {
                                 for (int i = 0; i < 10; i++) {
                                     try {
                                         JSONObject obj = new JSONObject();
-                                        obj.put("type", 1);
+                                        obj.put("type", "fixed");
                                         obj.put("msg", "async loaded");
                                         JSONObject style = new JSONObject();
                                         style.put("bgColor", "#FF1111");
@@ -221,7 +161,7 @@ public class TangramActivity extends Activity {
 
                 new AsyncPageLoader() {
                     @Override
-                    public void loadData(final int page, @NonNull final Card card, @NonNull final LoadedCallback callback) {
+                    public void loadData(final int page, @NonNull final Card card, @NonNull final AsyncPageLoader.LoadedCallback callback) {
                         mMainHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -230,7 +170,7 @@ public class TangramActivity extends Activity {
                                 for (int i = 0; i < 9; i++) {
                                     try {
                                         JSONObject obj = new JSONObject();
-                                        obj.put("type", 1);
+                                        obj.put("type", "history");
                                         obj.put("msg", "async page loaded, params: " + card.getParams().toString());
                                         cells.put(obj);
                                     } catch (JSONException e) {
@@ -259,34 +199,24 @@ public class TangramActivity extends Activity {
                         }, 400);
                     }
                 }));
-        engine.addSimpleClickSupport(new SampleClickSupport());
 
-        //Step 6: enable auto load more if your page's data is lazy loaded
         engine.enableAutoLoadMore(true);
         engine.register(InternalErrorSupport.class, new SampleErrorSupport());
 
-        //Step 7: bind recyclerView to engine
         engine.bindView(recyclerView);
 
-        //Step 8: listener recyclerView onScroll event to trigger auto load more
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                engine.onScrolled();
-            }
-        });
+        engine.getLayoutManager().setFixOffset(0, 0, 0, 0);
 
-        //Step 9: set an offset to fix card
-        engine.getLayoutManager().setFixOffset(0, 40, 0, 0);
+        //add: custom dataParser
+        builder.setDataParser(new CustomerSampleDataParser());
 
-        //Step 10: get tangram data and pass it to engine
-        String json = new String(getAssertsFile(this, "data.json"));
+        // Step 10: get tangram data and pass it to engine
+        String json = new String(getAssertsFile(this, "test.json"));
         JSONArray data = null;
         try {
             data = new JSONArray(json);
             engine.setData(data);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -337,5 +267,55 @@ public class TangramActivity extends Activity {
         return null;
     }
 
+    private static class ImageTarget implements Target {
 
+        ImageBase mImageBase;
+
+        ImageLoader.Listener mListener;
+
+        public ImageTarget(ImageBase imageBase) {
+            mImageBase = imageBase;
+        }
+
+        public ImageTarget(ImageLoader.Listener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            mImageBase.setBitmap(bitmap, true);
+            if (mListener != null) {
+                mListener.onImageLoadSuccess(bitmap);
+            }
+            Log.d("WaterfallActivity", "onBitmapLoaded " + from);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            if (mListener != null) {
+                mListener.onImageLoadFailed();
+            }
+            Log.d("WaterfallActivity", "onBitmapFailed ");
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            Log.d("WaterfallActivity", "onPrepareLoad ");
+        }
+    }
+
+    private void hideSystemBar(){
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            View decorView = getWindow().getDecorView();
+            int uiOptions =
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
 }
