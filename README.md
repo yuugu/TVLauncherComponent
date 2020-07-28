@@ -18,6 +18,6 @@
 * 轮播布局卡片
 * 瀑布流布局卡片
 
-<img src="screenshot/Screenshot_20200723_182434.jpg" alt="预览" style="zoom:25%;" /> <img src="screenshot/Screenshot_20200723_182456.jpg" alt="预览" style="zoom:25%;" />
+
 
 
