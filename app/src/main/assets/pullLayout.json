@@ -1,0 +1,122 @@
+[
+  {
+    "type": "container-onePlusN",
+    "items": [
+      {
+        "type": "customViewByAnnotation",
+        "text": "1拖N中的1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      }
+    ],
+    "style": {
+      "bgColor": "#ff0000"
+    }
+  },
+  {
+    "type": "container-onePlusN",
+    "items": [
+      {
+        "type": "customViewByAnnotation",
+        "text": "1拖N中的1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖2",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      }
+    ],
+    "style": {
+      "rows": [
+        30,
+        70
+      ],
+      "bgColor": "#00FF00"
+    }
+  },
+  {
+    "type": "container-onePlusN",
+    "items": [
+      {
+        "type": "customViewByAnnotation",
+        "text": "1拖N中的1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖2",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖3",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      }
+    ],
+    "style": {
+      "bgColor": "#0000FF"
+    }
+  },
+  {
+    "type": "container-onePlusN",
+    "items": [
+      {
+        "type": "customViewByAnnotation",
+        "text": "1拖N中的1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖1",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖2",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖3",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      },
+      {
+        "type": "customVeiwByInterface",
+        "text": "拖4",
+        "textColor": "#000000",
+        "headImg": "https://gw.alicdn.com/tfs/TB1vqF.PpXXXXaRaXXXXXXXXXXX-110-72.png"
+      }
+    ],
+    "style": {
+      "bgColor": "#0000ff0"
+    }
+  }
+]

@@ -30,7 +30,7 @@ dependencies {
     //noinspection GradleCompatible
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation('com.alibaba.android:virtualview:1.4.6@aar') {
+    api('com.alibaba.android:virtualview:1.4.6@aar') {
         transitive = true
     }
     implementation('com.alibaba.android:ultraviewpager:1.0.7.8@aar') {
